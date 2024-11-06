@@ -7,18 +7,18 @@
 #include <vector>
 #include <random>
 #include <ctime>
-//const velocityY = 32
-const int max_entities = 60;
+const int max_entities = 32;
 class Entity //every entity in game
 {
 public:
-	Entity(float p_x, float p_y, SDL_Texture* p_text, float velX = 0.0f, float velY = 0.0f, bool projectile = false);
+	Entity(float p_x, float p_y, SDL_Texture* p_text, float velX = 0.0f, float velY = 0.0f, bool projectile = false, int hp = 5);
 
-	static void Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture* entityTexture, int windowWidth, int windowHeight);
+	static void Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture* entityTexture, int windowWidth, int windowHeight, bool*detectOutOfBound);
 
 
 	void render(SDL_Renderer* renderer);
 	void updatePosition();
+	bool takeDamage();
 
 
 	SDL_Texture* getTexture();
@@ -26,15 +26,22 @@ public:
 	SDL_Rect getHitbox() const;
 
 
-	float getX(); //This makes it read only variables (less bugs)
+	void setVelocityX(float vx);
+	void setVelocityY(float vy);
+
+	float getX(); 
 	float getY();
 	bool getisProjectile() const;
 	float getVelocityY();
 	float getVelocityX();
+	int getHealth();
+	bool getHasCollided() const;
+	void setHasCollided(bool state);
 
 
 private:
-	//int hp; //to be used later
+	bool hasCollided = false;
+	int health;
 	float velocityY;
 	float velocityX;
 	bool isProjectile;

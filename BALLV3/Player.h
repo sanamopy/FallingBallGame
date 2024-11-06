@@ -6,7 +6,7 @@
 #include <vector>
 #include <iostream>
 #include "Entities.h"
-#include "Physics.h"
+#include "Collisions.h"
 class Player
 {
 public:
@@ -15,10 +15,26 @@ public:
 	void aiming() const;
 	void render(SDL_Renderer* renderer);
 
-	void shoot(SDL_Event& event, std::vector<Entity>& projectile, SDL_Texture* projectileTexture, int velocity);
+	void shoot(SDL_Event& event, std::vector<Entity>& projectile, SDL_Texture* projectileTexture, int velocity);	
+	static bool outOfBounds(std::vector<Entity>& projectile, int& windowWidth, int& windowHeight, bool* detectOutOfBounds);
+
+
 	SDL_Rect getRect() const;
 
+	bool getp_OutOfBounds() const;
+	float getProjectileX() const;
+	float getProjectileY() const;
+	float getVelocityX() const;
+	float getVelocityY() const;
+
+
+
 private:
+	bool detectOutOfBounds = false;
+	float projectileX;
+	float projectileY;
+	float velocityX;
+	float velocityY;
 	SDL_Rect rect;
 	SDL_Texture* texture;
 };

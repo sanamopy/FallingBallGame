@@ -24,7 +24,7 @@
     <ClCompile Include="Entities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Physics.cpp">
+    <ClCompile Include="Collisions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
@@ -35,7 +35,7 @@
     <ClInclude Include="RenderWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Physics.h">
+    <ClInclude Include="Collisions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Entities.h">

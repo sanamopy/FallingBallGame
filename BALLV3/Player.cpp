@@ -30,18 +30,18 @@ void Player::shoot(SDL_Event& event, std::vector<Entity>& projectile, SDL_Textur
 		int mouseX, mouseY;
 		SDL_GetMouseState(&mouseX, &mouseY);
 
-		int playerCenterX = rect.x + rect.w / 2;
-		int playerCenterY = rect.y + rect.h / 2;
+		int playerCenterX = rect.x + rect.w/2;
+		int playerCenterY = rect.y + rect.h/2;
 		double deltaX = mouseX - playerCenterX;
 		double deltaY = mouseY - playerCenterY;
 		double angle = atan2(deltaY, deltaX);
 
 
-		float projectileX = playerCenterX;
-		float projectileY = playerCenterY;
+		projectileX = playerCenterX;
+		projectileY = playerCenterY;
 
-		float velocityX = velocity * cos(angle);
-		float velocityY = velocity * sin(angle);
+		velocityX = velocity * cos(angle);
+		velocityY = velocity * sin(angle);
 
 
 		projectile.emplace_back(projectileX, projectileY, projectileTexture, velocityX, velocityY, true);
@@ -50,7 +50,23 @@ void Player::shoot(SDL_Event& event, std::vector<Entity>& projectile, SDL_Textur
 	}
 }
 
-
+//PITA
+bool Player::outOfBounds(std::vector<Entity>& projectile, int& windowWidth, int& windowHeight, bool* detectOutOfBounds)
+{
+	*detectOutOfBounds = false;
+	for (auto it = projectile.begin(); it != projectile.end(); )
+	{
+		if (it->getX() < 0 || it->getX() > windowWidth || it->getY() < 0 || it->getY() > (windowHeight / 1.2))
+		{
+			it = projectile.erase(it);
+			*detectOutOfBounds = true;
+		}
+		else {
+			it++;
+		}
+	}
+	return *detectOutOfBounds;
+}
 
 
 void Player::render(SDL_Renderer* renderer)
@@ -63,5 +79,28 @@ SDL_Rect Player::getRect() const
 	return rect;
 }
 
+bool Player::getp_OutOfBounds() const
+{
+	return detectOutOfBounds;
+}
 
+float Player::getProjectileX() const
+{
+	return projectileX;
+}
+
+float Player::getProjectileY() const
+{
+	return projectileY;
+}
+
+float Player::getVelocityX() const
+{
+	return velocityX;
+}
+
+float Player::getVelocityY() const
+{
+	return velocityY;
+}
 

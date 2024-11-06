@@ -2,25 +2,35 @@
 //ENTITIES 
 
 
-Entity::Entity(float p_x, float p_y, SDL_Texture* p_text, float velX, float velY, bool projectile)
-	: x(p_x), y(p_y), texture(p_text), velocityX(velX), velocityY(velY), isProjectile(projectile)
+Entity::Entity(float p_x, float p_y, SDL_Texture* p_text, float velX, float velY, bool projectile, int hp)
+	: x(p_x), y(p_y), texture(p_text), velocityX(velX), velocityY(velY), isProjectile(projectile), health(hp)
 {
+	health = 1; // hitbox issues
 	currentFrame.x = 0;
 	currentFrame.y = 0;
-	currentFrame.w = 32;
-	currentFrame.h = 32;
+	if (isProjectile) {
+		currentFrame.w = 32;
+		currentFrame.h = 32;
+	}
+	else {
+		currentFrame.w = 64;
+		currentFrame.h = 64;
+	}
 }
-void Entity::updatePosition() {
-	const float gravity = 0.2;  // Gravity constant
 
+bool Entity::takeDamage()
+{
+	if (health > 0) {
+		health -= 1;
+	}
+	return health <= 0;
+}
+
+
+void Entity::updatePosition() {
 	if (isProjectile) {
 		y += velocityY;  // Move the projectile by its velocity
 		x += velocityX;
-	}
-	else {
-		// Apply gravity to non-projectile entities
-		velocityY = 0;
-		velocityX = 0;
 	}
 }
 
@@ -36,8 +46,8 @@ void Entity::render(SDL_Renderer* renderer)
 	SDL_RenderCopy(renderer, texture, &currentFrame, &destRect);
 }
 
-
-void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture* entityTexture, int windowWidth, int windowHeight)
+//PITA
+void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture* entityTexture, int windowWidth, int windowHeight, bool* detectOutOfBound)
 {
 	static int entitiesToSpawn = 3;
 	static bool initialSpawn = false;
@@ -45,6 +55,7 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
 	int spawnHeight = windowHeight / 5;
 	int availableSpots = max_entities - entities.size();
 
+	// Initial spawn
 	if (!initialSpawn)
 	{
 		for (int i = 0; i < 3; i++)
@@ -53,38 +64,41 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
 			float randomY = static_cast<float>(windowHeight - spawnHeight + rand() % spawnHeight);
 
 			entities.emplace_back(randomX, randomY, entityTexture, 0.0f, false);
-
 		}
 		initialSpawn = true;
 	}
 
-	if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_n) {
+	// Handle spawning when the 'N' key is pressed or if an entity is out of bounds
+	if ((event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_n) || (*detectOutOfBound))
+	{
+		float randomX, randomY;
 
 		int spawnCount = std::min(entitiesToSpawn, availableSpots);
 		for (int i = 0; i < spawnCount; ++i)
 		{
-
-
-			float randomX = static_cast<float>(rand() % spawnWidth);
-			float randomY = static_cast<float>(windowHeight - spawnHeight + rand() % spawnHeight);
+			randomX = static_cast<float>(rand() % spawnWidth);
+			randomY = static_cast<float>(windowHeight - spawnHeight + rand() % spawnHeight);
 
 			entities.emplace_back(randomX, randomY, entityTexture, 0.0f, false);
 		}
 
-		if (entities.size() < max_entities) {
+		if (entities.size() < max_entities)
+		{
 			entitiesToSpawn++;
 		}
-		//move up 
-		//move out of this function later
-		//when ball out of bound move up later
-		for (auto& entity : entities) 
+
+		// Move non-projectile entities up
+		for (auto& entity : entities)
 		{
-			if (!entity.isProjectile) {
-				entity.y -= 32.0f;
+			if (!entity.isProjectile)
+			{
+				entity.y -= 64.0f;
 			}
 		}
 	}
 }
+
+
 
 SDL_Rect Entity::getHitbox() const
 {
@@ -94,6 +108,14 @@ SDL_Rect Entity::getHitbox() const
 	rect.w = currentFrame.w;
 	rect.h = currentFrame.h;
 	return rect;
+}
+
+void Entity::setVelocityX(float vx) {
+	velocityX = vx;
+}
+
+void Entity::setVelocityY(float vy) {
+	velocityY = vy;
 }
 
 
@@ -121,6 +143,10 @@ float Entity::getVelocityX()
 {
 	return velocityX;
 }
+int Entity::getHealth()
+{
+	return health;
+}
 
 SDL_Texture* Entity::getTexture()
 {
@@ -133,3 +159,10 @@ SDL_Rect Entity::getCurrentFrame() const //For animations
 }
 
 
+bool Entity::getHasCollided() const {
+	return hasCollided;
+}
+
+void Entity::setHasCollided(bool state) {
+	hasCollided = state;
+}

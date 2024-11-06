@@ -12,7 +12,7 @@
 #include "Entities.h"
 #include "RenderWindow.h"
 int main(int argc, char* args[]) {
-
+	std::cout << "Hello world" << std::endl;
 	//If shit explodes, show error message
 	if (SDL_Init(SDL_INIT_VIDEO) > 0)
 	{

@@ -139,13 +139,13 @@
   <ItemGroup>
     <ClCompile Include="Entities.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="Collisions.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="RenderWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Entities.h" />
-    <ClInclude Include="Physics.h" />
+    <ClInclude Include="Collisions.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="RenderWindow.h" />
   </ItemGroup>

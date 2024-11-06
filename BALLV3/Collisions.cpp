@@ -63,9 +63,9 @@ void Collisions::bounceProjectile(Entity& projectile, const SDL_Rect& entityHitb
 
 void Collisions::applyGravity(std::vector<Entity>& projectiles, float gravityStrength) {
     for (auto& projectile : projectiles) {
-        if (projectile.getisProjectile() && projectile.getHasCollided()) { // Apply only if the projectile has collided
-            float newVelocityY = projectile.getVelocityY() + gravityStrength; // Increment velocityY
-            projectile.setVelocityY(newVelocityY); // Update projectile's downward speed
+        if (projectile.getisProjectile() && projectile.getHasCollided()) { 
+            float newVelocityY = projectile.getVelocityY() + gravityStrength; 
+            projectile.setVelocityY(newVelocityY); 
         }
     }
 }

@@ -1,11 +1,14 @@
 #include "Collisions.h"
 #include "Entities.h"
 
-bool Collisions::contact(const SDL_Rect& rectA, const SDL_Rect& rectB) {
+bool Collisions::contact(const SDL_Rect& rectA, const SDL_Rect& rectB) 
+{
     return SDL_HasIntersection(&rectA, &rectB);
 }
 
-bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Entity>& projectiles) {
+//PITA
+bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Entity>& projectiles) 
+{
     bool collisionDetected = false;
 
     for (auto& projectile : projectiles) {
@@ -17,24 +20,22 @@ bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Enti
             if (!entityIt->getisProjectile() && contact(projectileHitbox, entityHitbox)) {
                 std::cout << "COLLISION MUY BUENO TRES BIEN" << std::endl;
 
-                // Bounce the projectile instead of erasing
                 bounceProjectile(projectile, entityHitbox);
 
-                // Mark the projectile as having collided
                 projectile.setHasCollided(true);
 
                 if (entityIt->takeDamage()) {
-                    entityIt = entities.erase(entityIt); // Erase if health is zero
+                    entityIt = entities.erase(entityIt);
                 }
                 else {
-                    ++entityIt; // Move to the next entity if not erased
+                    ++entityIt;
                 }
 
                 collisionDetected = true;
-                continue; // Exit inner loop since the entity has been erased
+                continue; 
             }
             else {
-                ++entityIt; // Move to the next entity if no collision
+                ++entityIt; 
             }
         }
     }
@@ -42,26 +43,28 @@ bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Enti
     return collisionDetected;
 }
 
-void Collisions::bounceProjectile(Entity& projectile, const SDL_Rect& entityHitbox) {
+void Collisions::bounceProjectile(Entity& projectile, const SDL_Rect& entityHitbox) 
+{
     SDL_Rect projectileHitbox = projectile.getHitbox();
 
     // funny amplify bouncy
-    const float bounceMultiplier = 1.2f; // Increase for a stronger bounce
+    const float bounceMultiplier = 1.2f; 
 
     if (projectileHitbox.x + projectileHitbox.w >= entityHitbox.x &&
-        projectileHitbox.x <= entityHitbox.x + entityHitbox.w) {
-        // Reverse and amplify the vertical velocity for a strong bounce
+        projectileHitbox.x <= entityHitbox.x + entityHitbox.w) 
+    {
         projectile.setVelocityY(-projectile.getVelocityY() * bounceMultiplier);
     }
     if (projectileHitbox.y + projectileHitbox.h >= entityHitbox.y &&
-        projectileHitbox.y <= entityHitbox.y + entityHitbox.h) {
-        // Reverse and amplify the horizontal velocity for a strong bounce
+        projectileHitbox.y <= entityHitbox.y + entityHitbox.h) 
+    {
         projectile.setVelocityX(-projectile.getVelocityX() * bounceMultiplier);
     }
 }
 
-
-void Collisions::applyGravity(std::vector<Entity>& projectiles, float gravityStrength) {
+//PITA
+void Collisions::applyGravity(std::vector<Entity>& projectiles, float gravityStrength) 
+{
     for (auto& projectile : projectiles) {
         if (projectile.getisProjectile() && projectile.getHasCollided()) { 
             float newVelocityY = projectile.getVelocityY() + gravityStrength; 

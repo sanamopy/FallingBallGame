@@ -68,7 +68,6 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
 		initialSpawn = true;
 	}
 
-	// Handle spawning when the 'N' key is pressed or if an entity is out of bounds
 	if ((event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_n) || (*detectOutOfBound))
 	{
 		float randomX, randomY;
@@ -87,7 +86,6 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
 			entitiesToSpawn++;
 		}
 
-		// Move non-projectile entities up
 		for (auto& entity : entities)
 		{
 			if (!entity.isProjectile)

@@ -33,6 +33,8 @@ int main(int argc, char* args[]) {
 
 	srand(static_cast<unsigned int>(time(0)));
 	int windowHeight = 840, windowWidth = 620;
+	//play area 840, 620
+	//window area 1040, 820
 	
 	RenderWindow window("window", windowWidth, windowHeight);
 
@@ -85,7 +87,6 @@ int main(int argc, char* args[]) {
 
 		Entity::Spawn(event, entities, redTexture, windowWidth, windowHeight, &isOutOfBounds);
 
-		// Apply gravity to projectiles
 
 		Collisions::checkCollisions(entities, projectile);
 		Collisions::applyGravity(projectile, gravityStrength);

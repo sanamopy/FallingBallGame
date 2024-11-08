@@ -53,4 +53,4 @@ private:
 
 
 
-#endif // !Entity_h
+#endif // Entity_h

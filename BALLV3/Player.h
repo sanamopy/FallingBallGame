@@ -27,6 +27,8 @@ public:
 	float getVelocityX() const;
 	float getVelocityY() const;
 
+	void setX(int x);
+	void setY(int y);
 
 
 private:

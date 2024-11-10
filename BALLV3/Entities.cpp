@@ -2,15 +2,19 @@
 //ENTITIES 
 
 
-Entity::Entity(float p_x, float p_y, SDL_Texture* p_text, float velX, float velY, bool projectile, int hp)
-	: x(p_x), y(p_y), texture(p_text), velocityX(velX), velocityY(velY), isProjectile(projectile), health(hp)
+Entity::Entity(float p_x, float p_y, SDL_Texture* p_text, float velX, float velY, bool projectile, int hp, bool is_wall)
+	: x(p_x), y(p_y), texture(p_text), velocityX(velX), velocityY(velY), isProjectile(projectile), health(hp), isWall(is_wall)
 {
-	health = 1; // hitbox issues
 	currentFrame.x = 0;
 	currentFrame.y = 0;
 	if (isProjectile) {
 		currentFrame.w = 32;
 		currentFrame.h = 32;
+	}
+	else if (isWall) {
+		currentFrame.w = 50;
+		currentFrame.h = 840;
+
 	}
 	else {
 		currentFrame.w = 64;
@@ -18,12 +22,14 @@ Entity::Entity(float p_x, float p_y, SDL_Texture* p_text, float velX, float velY
 	}
 }
 
+
 bool Entity::takeDamage()
 {
 	if (health > 0) {
 		health -= 1;
 	}
 	return health <= 0;
+
 }
 
 
@@ -49,53 +55,96 @@ void Entity::render(SDL_Renderer* renderer)
 //PITA
 void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture* entityTexture, int windowWidth, int windowHeight, bool* detectOutOfBound)
 {
-	static int entitiesToSpawn = 3;
-	static bool initialSpawn = false;
-	int spawnWidth = windowWidth - 64;
-	int spawnHeight = windowHeight / 5;
-	int availableSpots = max_entities - entities.size();
+    static int entitiesToSpawn = 3;
+    static bool initialSpawn = false;
+    int spawnWidth = windowWidth - 128;
+    int spawnHeight = windowHeight / 4;
+    float minimumDistance = 128.0f; 
+    int maxAttempts = 10;
 
-	// Initial spawn
-	if (!initialSpawn)
-	{
-		for (int i = 0; i < 3; i++)
-		{
-			float randomX = static_cast<float>(rand() % spawnWidth);
-			float randomY = static_cast<float>(windowHeight - spawnHeight + rand() % spawnHeight);
+    if (!initialSpawn)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            float randomX, randomY;
+            bool positionFound = false;
+            int attempts = 0;
 
-			entities.emplace_back(randomX, randomY, entityTexture, 0.0f, false);
-		}
-		initialSpawn = true;
-	}
+            while (!positionFound && attempts < maxAttempts) {
+                randomX = static_cast<float>(rand() % spawnWidth);
+                randomY = static_cast<float>(windowHeight - spawnHeight - (rand() % spawnHeight));
+                positionFound = true;
 
-	if ((event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_n) || (*detectOutOfBound))
-	{
-		float randomX, randomY;
+                // Check distance from all existing entities
+                for (const auto& entity : entities) {
+                    float dx = entity.x - randomX;
+                    float dy = entity.y - randomY;
+                    if (std::sqrt(dx * dx + dy * dy) < minimumDistance) {
+                        positionFound = false;
+                        break;
+                    }
+                }
+                attempts++;
+            }
 
-		int spawnCount = std::min(entitiesToSpawn, availableSpots);
-		for (int i = 0; i < spawnCount; ++i)
-		{
-			randomX = static_cast<float>(rand() % spawnWidth);
-			randomY = static_cast<float>(windowHeight - spawnHeight + rand() % spawnHeight);
+            // Fallback: Adjust position if max attempts reached
+            if (!positionFound && !entities.empty()) {
+                randomX = static_cast<float>(rand() % spawnWidth); // Small offset to avoid overlap
+                randomY = static_cast<float>(windowHeight - spawnHeight - (rand() % spawnHeight));
+            }
 
-			entities.emplace_back(randomX, randomY, entityTexture, 0.0f, false);
-		}
+            entities.emplace_back(randomX, randomY, entityTexture, 0.0f, false);
+        }
+        initialSpawn = true;
+    }
 
-		if (entities.size() < max_entities)
-		{
-			entitiesToSpawn++;
-		}
+    if ((event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_n) || (*detectOutOfBound))
+    {
+        for (int i = 0; i < entitiesToSpawn; ++i)
+        {
+            float randomX, randomY;
+            bool positionFound = false;
+            int attempts = 0;
 
-		for (auto& entity : entities)
-		{
-			if (!entity.isProjectile)
-			{
-				entity.y -= 64.0f;
-			}
-		}
-	}
+            // Attempt to find a non-clustered position
+            while (!positionFound && attempts < maxAttempts) {
+                randomX = static_cast<float>(rand() % spawnWidth);
+                randomY = static_cast<float>(windowHeight - spawnHeight + rand() % spawnHeight);
+                positionFound = true;
+
+                // Check distance from all existing entities
+                for (const auto& entity : entities) {
+                    float dx = entity.x - randomX;
+                    float dy = entity.y - randomY;
+                    if (std::sqrt(dx * dx + dy * dy) < minimumDistance) {
+                        positionFound = false;
+                        break;
+                    }
+                }
+                attempts++;
+            }
+
+            // Fallback: Adjust position if max attempts reached
+            if (!positionFound && !entities.empty()) {
+                randomX = static_cast<float>(rand() % spawnWidth); // Small offset to avoid overlap
+                randomY = static_cast<float>(windowHeight - spawnHeight - (rand() % spawnHeight));
+            }
+
+            entities.emplace_back(randomX, randomY, entityTexture, 0.0f, false);
+        }
+
+        entitiesToSpawn++;
+        std::cout << "SPAWNING : " << entitiesToSpawn << " - 1" << std::endl;
+
+        for (auto& entity : entities)
+        {
+            if (!entity.isProjectile && !entity.isWall)
+            {
+                entity.y -= 96.0f;
+            }
+        }
+    }
 }
-
 
 
 SDL_Rect Entity::getHitbox() const
@@ -163,4 +212,7 @@ bool Entity::getHasCollided() const {
 
 void Entity::setHasCollided(bool state) {
 	hasCollided = state;
+}
+SDL_Rect& Entity::getCurrentFrame() {
+	return currentFrame;
 }

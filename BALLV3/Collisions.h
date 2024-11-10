@@ -17,7 +17,6 @@ public:
 
     static void applyGravity(std::vector<Entity>& projectiles, float gravityStrength);
 
-    
 private:
 
 };

@@ -13,109 +13,90 @@
 #include "RenderWindow.h"
 
 int main(int argc, char* args[]) {
-	std::cout << "Hello world" << std::endl;
-	//If shit explodes, show error message
-	if (SDL_Init(SDL_INIT_VIDEO) > 0)
-	{
-		std::cout << "SDL EXPLODE MERDE. SDL_ERROR : " << SDL_GetError() << std::endl;
-	}
-	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) //if diff image file, change _PNG
-		//to increase qual of image, increase res of imig
-	{
-		std::cout << "IMAGE EXPLODE MERDE. IMG ERROR: " << SDL_GetError() << std::endl;
-	}
+    std::cout << "Hello world" << std::endl;
 
-	const int maxFPS = 32;
-	const int frame_time = 1000 / maxFPS;
-	Uint32 framestart;
-	int frame;
-	const float gravityStrength = 6.0f;
+    if (SDL_Init(SDL_INIT_VIDEO) > 0) {
+        std::cout << "SDL EXPLODE MERDE. SDL_ERROR : " << SDL_GetError() << std::endl;
+    }
+    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+        std::cout << "IMAGE EXPLODE MERDE. IMG ERROR: " << SDL_GetError() << std::endl;
+    }
 
-	srand(static_cast<unsigned int>(time(0)));
-	int windowHeight = 840, windowWidth = 620;
-	//play area 840, 620
-	//window area 1040, 820
-	
-	RenderWindow window("window", windowWidth, windowHeight);
+    const int maxFPS = 32;
+    const int frame_time = 1000 / maxFPS;
+    Uint32 framestart;
+    int frame;
+    const float gravityStrength = 6.0f;
 
-	SDL_Texture* blueTexture = window.loadTexture("PNG1-BLUE.png");
-	SDL_Texture* redTexture = window.loadTexture("PNG1-RED.png");
-	SDL_Texture* projectileTexture = window.loadTexture("PNG1-GREEN.png");
+    srand(static_cast<unsigned int>(time(0)));
+    int windowHeight = 840, windowWidth = 620;
 
-	SDL_Surface* mouse = IMG_Load("PNG1-PINK.png");
-	std::vector<Entity> entities;
-	std::vector<Entity> projectile;
+    RenderWindow window("window", windowWidth, windowHeight);
 
+    SDL_Texture* blueTexture = window.loadTexture("PNG1-BLUE.png");
+    SDL_Texture* redTexture = window.loadTexture("PNG1-RED.png");
+    SDL_Texture* projectileTexture = window.loadTexture("PNG1-GREEN.png");
 
-	SDL_Cursor* cursor = SDL_CreateColorCursor(mouse, 0, 0);
+    SDL_Surface* mouse = IMG_Load("PNG1-PINK.png");
+    std::vector<Entity> entities;
+    std::vector<Entity> projectile;
 
+    SDL_Cursor* cursor = SDL_CreateColorCursor(mouse, 0, 0);
 
-	Player player(300, 300, blueTexture, windowWidth, windowHeight);
-	//player.Mouse(16, 16, mouseTexture);
+    Player player(300, 300, blueTexture, windowWidth, windowHeight);
 
-	bool gameRunning = true;
-	SDL_Event event;
+    // Add walls to the entities vector
+    window.addWalls(entities);
 
-	while (gameRunning)
-	{
-		framestart = SDL_GetTicks();
-		SDL_SetCursor(cursor);
-		
-		bool isOutOfBounds = false;
+    bool gameRunning = true;
+    SDL_Event event;
 
-		while (SDL_PollEvent(&event))
-		{
-			if (event.type == SDL_QUIT) {
-				gameRunning = false;
-			}
+    while (gameRunning) {
+        framestart = SDL_GetTicks();
+        SDL_SetCursor(cursor);
 
-			//player.updatePosition();
-			
-			player.shoot(event, projectile, projectileTexture, 32);
-		}
-		frame = SDL_GetTicks() - framestart;
+        bool isOutOfBounds = false;
 
-		if (frame < frame_time) {
-			SDL_Delay(frame_time - frame);
-		}
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                gameRunning = false;
+            }
+            player.shoot(event, projectile, projectileTexture, 32);
+        }
+        frame = SDL_GetTicks() - framestart;
 
-		Player::outOfBounds(projectile, windowWidth, windowHeight, &isOutOfBounds);
-		/*debug
-		if (isOutOfBounds) {
-			std::cout << "OUT OF BOUNDS TRES BIEN" << std::endl;
-		}*/
+        if (frame < frame_time) {
+            SDL_Delay(frame_time - frame);
+        }
 
-		Entity::Spawn(event, entities, redTexture, windowWidth, windowHeight, &isOutOfBounds);
+        Player::outOfBounds(projectile, windowWidth, windowHeight, &isOutOfBounds);
+
+        Entity::Spawn(event, entities, redTexture, windowWidth, windowHeight, &isOutOfBounds);
+
+        Collisions::checkCollisions(entities, projectile);
+        Collisions::applyGravity(projectile, gravityStrength);
+
+        for (auto& proj : projectile) {
+            proj.updatePosition();
+        }
+
+        window.clear();
 
 
-		Collisions::checkCollisions(entities, projectile);
-		Collisions::applyGravity(projectile, gravityStrength);
+        for (auto& proj : projectile) {
+            window.render(proj);
+        }
 
-		for (auto& proj : projectile) {
-			proj.updatePosition();
-		}
-		
-		window.clear();
-		for (auto& proj : projectile) {
-			window.render(proj);
-		}
+        for (auto& entity : entities) {
+            window.render(entity);
+        }
 
-		for (auto& entity : entities)
-		{
-			window.render(entity);
-		}
+        player.render(window.getRenderer());
+        window.display();
+    }
 
-		player.render(window.getRenderer());
-		window.display();
-
-	}
-
-
-
-	window.cleanUp();
-	SDL_Quit();
-	return 0;
-
+    window.cleanUp();
+    SDL_Quit();
+    return 0;
 }
-
 

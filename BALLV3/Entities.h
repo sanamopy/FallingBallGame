@@ -11,9 +11,15 @@ const int max_entities = 32;
 class Entity //every entity in game
 {
 public:
-	Entity(float p_x, float p_y, SDL_Texture* p_text, float velX = 0.0f, float velY = 0.0f, bool projectile = false, int hp = 5);
+	Entity(float p_x, float p_y, SDL_Texture* p_text,
+		float velX = 0.0f, float velY = 0.0f,
+		bool projectile = false, int hp = 1,
+		bool is_wall = false);
 
-	static void Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture* entityTexture, int windowWidth, int windowHeight, bool*detectOutOfBound);
+
+	static void Spawn(SDL_Event& event, 
+		std::vector<Entity>& entities, SDL_Texture* entityTexture,
+		int windowWidth, int windowHeight, bool*detectOutOfBound);
 
 
 	void render(SDL_Renderer* renderer);
@@ -28,6 +34,7 @@ public:
 
 	void setVelocityX(float vx);
 	void setVelocityY(float vy);
+	bool isWall;
 
 	float getX(); 
 	float getY();
@@ -37,6 +44,7 @@ public:
 	int getHealth();
 	bool getHasCollided() const;
 	void setHasCollided(bool state);
+	SDL_Rect& getCurrentFrame();
 
 
 private:

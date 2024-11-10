@@ -69,6 +69,12 @@ bool Player::outOfBounds(std::vector<Entity>& projectile, int& windowWidth, int&
 }
 
 
+
+void Player::setX(int x) { rect.x = x; }
+void Player::setY(int y) { rect.y = y; }
+
+
+
 void Player::render(SDL_Renderer* renderer)
 {
 	SDL_RenderCopy(renderer, texture, nullptr, &rect);

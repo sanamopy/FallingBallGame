@@ -18,12 +18,17 @@ public:
 	void display();
 	SDL_Renderer* getRenderer() const;
 
+	void addWalls(std::vector<Entity>& entities) const;
+
+
 private:
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+
+	SDL_Texture* wallTexture;
+
+	Entity leftWall;
+	Entity rightWall;
 };
-
-
-
 
 #endif // !RENDERWINDOW_H

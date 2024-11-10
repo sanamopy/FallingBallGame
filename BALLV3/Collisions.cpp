@@ -7,24 +7,24 @@ bool Collisions::contact(const SDL_Rect& rectA, const SDL_Rect& rectB)
 }
 
 //PITA
-bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Entity>& projectiles) 
+bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Entity>& projectiles)
 {
     bool collisionDetected = false;
 
     for (auto& projectile : projectiles) {
         const SDL_Rect projectileHitbox = projectile.getHitbox();
 
-        for (auto entityIt = entities.begin(); entityIt != entities.end(); ) {
+        for (auto entityIt = entities.begin(); entityIt != entities.end();) {
             const SDL_Rect entityHitbox = entityIt->getHitbox();
 
             if (!entityIt->getisProjectile() && contact(projectileHitbox, entityHitbox)) {
-                std::cout << "COLLISION MUY BUENO TRES BIEN" << std::endl;
+                std::cout << "COLLISION TRES BIEN!" << std::endl;
 
                 bounceProjectile(projectile, entityHitbox);
 
                 projectile.setHasCollided(true);
 
-                if (entityIt->takeDamage()) {
+                if (!entityIt->isWall && entityIt->takeDamage()) {
                     entityIt = entities.erase(entityIt);
                 }
                 else {
@@ -32,14 +32,13 @@ bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Enti
                 }
 
                 collisionDetected = true;
-                continue; 
+                break;
             }
             else {
-                ++entityIt; 
+                ++entityIt;
             }
         }
     }
-
     return collisionDetected;
 }
 
@@ -48,7 +47,7 @@ void Collisions::bounceProjectile(Entity& projectile, const SDL_Rect& entityHitb
     SDL_Rect projectileHitbox = projectile.getHitbox();
 
     // funny amplify bouncy
-    const float bounceMultiplier = 1.2f; 
+    const float bounceMultiplier = 1.0f; 
 
     if (projectileHitbox.x + projectileHitbox.w >= entityHitbox.x &&
         projectileHitbox.x <= entityHitbox.x + entityHitbox.w) 

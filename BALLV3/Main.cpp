@@ -73,7 +73,7 @@ int main(int argc, char* args[]) {
 
         Entity::Spawn(event, entities, redTexture, windowWidth, windowHeight, &isOutOfBounds);
 
-        Collisions::checkCollisions(entities, projectile);
+        Collisions::checkCollisions(entities, projectile, player);
         Collisions::applyGravity(projectile, gravityStrength);
 
         for (auto& proj : projectile) {

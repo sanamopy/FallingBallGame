@@ -26,7 +26,6 @@ public:
 	void updatePosition();
 	bool takeDamage();
 
-
 	SDL_Texture* getTexture();
 	SDL_Rect getCurrentFrame() const;
 	SDL_Rect getHitbox() const;
@@ -34,7 +33,6 @@ public:
 
 	void setVelocityX(float vx);
 	void setVelocityY(float vy);
-	bool isWall;
 
 	float getX(); 
 	float getY();
@@ -45,9 +43,11 @@ public:
 	bool getHasCollided() const;
 	void setHasCollided(bool state);
 	SDL_Rect& getCurrentFrame();
+	bool isWall;
 
 
 private:
+
 	bool hasCollided = false;
 	int health;
 	float velocityY;

@@ -7,7 +7,7 @@ bool Collisions::contact(const SDL_Rect& rectA, const SDL_Rect& rectB)
 }
 
 //PITA
-bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Entity>& projectiles)
+bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Entity>& projectiles, Player& player)
 {
     bool collisionDetected = false;
 
@@ -18,7 +18,7 @@ bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Enti
             const SDL_Rect entityHitbox = entityIt->getHitbox();
 
             if (!entityIt->getisProjectile() && contact(projectileHitbox, entityHitbox)) {
-                std::cout << "COLLISION TRES BIEN!" << std::endl;
+                //std::cout << "COLLISION TRES BIEN!" << std::endl;
 
                 bounceProjectile(projectile, entityHitbox);
 
@@ -26,6 +26,9 @@ bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Enti
 
                 if (!entityIt->isWall && entityIt->takeDamage()) {
                     entityIt = entities.erase(entityIt);
+                    player.incrementScore();              // Increment score here
+
+
                 }
                 else {
                     ++entityIt;

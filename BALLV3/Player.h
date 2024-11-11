@@ -21,6 +21,7 @@ public:
 
 	SDL_Rect getRect() const;
 
+
 	bool getp_OutOfBounds() const;
 	float getProjectileX() const;
 	float getProjectileY() const;
@@ -30,6 +31,9 @@ public:
 	void setX(int x);
 	void setY(int y);
 
+	void incrementScore();
+	int getScore() const;
+	int score = 0;
 
 private:
 	bool detectOutOfBounds = false;

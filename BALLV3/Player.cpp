@@ -56,7 +56,8 @@ bool Player::outOfBounds(std::vector<Entity>& projectile, int& windowWidth, int&
 	*detectOutOfBounds = false;
 	for (auto it = projectile.begin(); it != projectile.end(); )
 	{
-		if (it->getX() < 0 || it->getX() > windowWidth || it->getY() < 0 || it->getY() > (windowHeight / 1.2))
+		if (it->getX() < 0 || it->getX() > windowWidth || it->getY() < 0 
+			|| it->getY() > (windowHeight) || it->getY() < 64)
 		{
 			it = projectile.erase(it);
 			*detectOutOfBounds = true;
@@ -74,6 +75,14 @@ void Player::setX(int x) { rect.x = x; }
 void Player::setY(int y) { rect.y = y; }
 
 
+void Player::incrementScore() {
+	score += 1;
+	std::cout << "SCORE: " << score << std::endl;
+}
+
+int Player::getScore() const {
+	return score;
+}
 
 void Player::render(SDL_Renderer* renderer)
 {

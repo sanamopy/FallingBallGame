@@ -55,10 +55,12 @@ void Entity::render(SDL_Renderer* renderer)
 //PITA
 void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture* entityTexture, int windowWidth, int windowHeight, bool* detectOutOfBound)
 {
+
     static int entitiesToSpawn = 3;
+    static int placeholder = 2;
     static bool initialSpawn = false;
     int spawnWidth = windowWidth - 128;
-    int spawnHeight = windowHeight / 4;
+    int spawnHeight = windowHeight / 4 + 10;
     float minimumDistance = 128.0f; 
     int maxAttempts = 10;
 
@@ -106,13 +108,12 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
             bool positionFound = false;
             int attempts = 0;
 
-            // Attempt to find a non-clustered position
             while (!positionFound && attempts < maxAttempts) {
                 randomX = static_cast<float>(rand() % spawnWidth);
-                randomY = static_cast<float>(windowHeight - spawnHeight + rand() % spawnHeight);
+                //randomY = static_cast<float>(windowHeight - spawnHeight  - (rand() % spawnHeight));
+                randomY = static_cast<float>(windowHeight + (rand() % spawnHeight));
                 positionFound = true;
 
-                // Check distance from all existing entities
                 for (const auto& entity : entities) {
                     float dx = entity.x - randomX;
                     float dy = entity.y - randomY;
@@ -124,17 +125,22 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
                 attempts++;
             }
 
-            // Fallback: Adjust position if max attempts reached
             if (!positionFound && !entities.empty()) {
-                randomX = static_cast<float>(rand() % spawnWidth); // Small offset to avoid overlap
-                randomY = static_cast<float>(windowHeight - spawnHeight - (rand() % spawnHeight));
+                randomX = static_cast<float>(rand() % spawnWidth);
+                //randomY = static_cast<float>(windowHeight - spawnHeight  - (rand() % spawnHeight));
+                randomY = static_cast<float>(windowHeight + spawnHeight  - (rand() % spawnHeight));
             }
 
             entities.emplace_back(randomX, randomY, entityTexture, 0.0f, false);
         }
 
-        entitiesToSpawn++;
-        std::cout << "SPAWNING : " << entitiesToSpawn << " - 1" << std::endl;
+        if (placeholder % 2 == 0) {
+            entitiesToSpawn++;
+        }
+        placeholder++;
+        
+
+        std::cout << "SPAWNING : " << entitiesToSpawn  << std::endl;
 
         for (auto& entity : entities)
         {
@@ -200,7 +206,7 @@ SDL_Texture* Entity::getTexture()
 	return texture;
 }
 
-SDL_Rect Entity::getCurrentFrame() const //For animations
+SDL_Rect Entity::getCurrentFrame() const 
 {
 	return currentFrame;
 }

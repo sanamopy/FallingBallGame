@@ -1,7 +1,7 @@
 #include "RenderWindow.h"
-#include "Entities.h"  // Include Entity definition
+#include "Entities.h"  
 
-RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h) // and walll
+RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h) 
     : window(NULL), renderer(NULL), wallTexture(NULL),
     leftWall(0, 0, nullptr, 0.0f, 0.0f, false, INT_MAX),
     rightWall(p_w - 50, 0, nullptr, 0.0f, 0.0f, false, INT_MAX) 

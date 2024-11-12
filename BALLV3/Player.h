@@ -7,6 +7,9 @@
 #include <iostream>
 #include "Entities.h"
 #include "Collisions.h"
+class Entity;
+class PowerUp;
+
 class Player
 {
 public:
@@ -17,7 +20,7 @@ public:
 
 	void shoot(SDL_Event& event, std::vector<Entity>& projectile, SDL_Texture* projectileTexture, int velocity);	
 	static bool outOfBounds(std::vector<Entity>& projectile, int& windowWidth, int& windowHeight, bool* detectOutOfBounds);
-
+	void setMaxProjectiles(int newMax);
 
 	SDL_Rect getRect() const;
 
@@ -27,15 +30,18 @@ public:
 	float getProjectileY() const;
 	float getVelocityX() const;
 	float getVelocityY() const;
+	int getMaxProjectiles() const;
 
 	void setX(int x);
 	void setY(int y);
 
 	void incrementScore();
 	int getScore() const;
-	int score = 0;
+
 
 private:
+	int score = 0;
+	int maxProjectiles = 1;
 	bool detectOutOfBounds = false;
 	float projectileX;
 	float projectileY;

@@ -25,7 +25,7 @@ void Player::aiming() const
 
 void Player::shoot(SDL_Event& event, std::vector<Entity>& projectile, SDL_Texture* projectileTexture, int velocity)
 {
-	if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE)
+	if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE && projectile.size() < maxProjectiles)
 	{
 		int mouseX, mouseY;
 		SDL_GetMouseState(&mouseX, &mouseY);
@@ -50,6 +50,13 @@ void Player::shoot(SDL_Event& event, std::vector<Entity>& projectile, SDL_Textur
 	}
 }
 
+void Player::setMaxProjectiles(int newMax) {
+	maxProjectiles = newMax;
+}
+int Player::getMaxProjectiles() const
+{
+	return maxProjectiles;
+}
 //PITA
 bool Player::outOfBounds(std::vector<Entity>& projectile, int& windowWidth, int& windowHeight, bool* detectOutOfBounds)
 {
@@ -77,7 +84,7 @@ void Player::setY(int y) { rect.y = y; }
 
 void Player::incrementScore() {
 	score += 1;
-	std::cout << "SCORE: " << score << std::endl;
+	//std::cout << "SCORE: " << score << std::endl;
 }
 
 int Player::getScore() const {

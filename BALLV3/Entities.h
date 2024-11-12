@@ -17,9 +17,9 @@ public:
 		bool is_wall = false);
 
 
-	static void Spawn(SDL_Event& event, 
+	static void Spawn(SDL_Event& event,
 		std::vector<Entity>& entities, SDL_Texture* entityTexture,
-		int windowWidth, int windowHeight, bool*detectOutOfBound);
+		int windowWidth, int windowHeight, bool* detectOutOfBound);
 
 
 	void render(SDL_Renderer* renderer);
@@ -34,7 +34,7 @@ public:
 	void setVelocityX(float vx);
 	void setVelocityY(float vy);
 
-	float getX(); 
+	float getX();
 	float getY();
 	bool getisProjectile() const;
 	float getVelocityY();

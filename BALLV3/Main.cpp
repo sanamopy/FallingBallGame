@@ -1,5 +1,8 @@
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
+#include <SDL_mixer.h>
+
 #include <cmath>
 #include <iostream>
 #include <vector>
@@ -7,19 +10,37 @@
 #include <cstring>
 #include <stdio.h>
 
+#include "FontManager.h"
 #include "Player.h"
 #include "Collisions.h"
 #include "Entities.h"
 #include "RenderWindow.h"
-
+#include "Audio.h"
+#include "PowerUp.h"
+class Entity;
 int main(int argc, char* args[]) {
     std::cout << "Hello world" << std::endl;
 
-    if (SDL_Init(SDL_INIT_VIDEO) > 0) {
-        std::cout << "SDL EXPLODE MERDE. SDL_ERROR : " << SDL_GetError() << std::endl;
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) > 0) {
+        std::cout << "SDL initialization failed: " << SDL_GetError() << std::endl;
     }
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-        std::cout << "IMAGE EXPLODE MERDE. IMG ERROR: " << SDL_GetError() << std::endl;
+        std::cout << "Image initialization failed: " << SDL_GetError() << std::endl;
+    }
+    if (TTF_Init() == -1) {
+        std::cout << "TTF initialization failed: " << TTF_GetError() << std::endl;
+    }
+
+    // Initialize Audio
+    Audio audio;
+    if (!audio.initialize()) {
+        std::cout << "NO LOAD AUDIO " << Mix_GetError() << std::endl;
+        return -1;
+    }
+
+    if (!audio.loadMp3("hitSound.mp3")) {
+        std::cout << "NO LOAD MP3" << Mix_GetError() << std::endl;
+        return -1;
     }
 
     const int maxFPS = 32;
@@ -29,7 +50,8 @@ int main(int argc, char* args[]) {
     const float gravityStrength = 6.0f;
 
     srand(static_cast<unsigned int>(time(0)));
-    int windowHeight = 840, windowWidth = 620;
+    int windowHeight = 840;
+    int windowWidth = 620;
 
     RenderWindow window("window", windowWidth, windowHeight);
 
@@ -37,16 +59,22 @@ int main(int argc, char* args[]) {
     SDL_Texture* redTexture = window.loadTexture("PNG1-RED.png");
     SDL_Texture* projectileTexture = window.loadTexture("PNG1-GREEN.png");
 
+    SDL_Texture* powerUpTexture = window.loadTexture("PNG1-PURPLE.png"); // Load Power-Up texture
+    PowerUp::setTexture(powerUpTexture); // Set Power-Up texture
+
     SDL_Surface* mouse = IMG_Load("PNG1-PINK.png");
     std::vector<Entity> entities;
     std::vector<Entity> projectile;
+    std::vector<PowerUp> powerUps;
 
     SDL_Cursor* cursor = SDL_CreateColorCursor(mouse, 0, 0);
 
     Player player(300, 300, blueTexture, windowWidth, windowHeight);
 
-    // Add walls to the entities vector
     window.addWalls(entities);
+
+    // Load font using FontManager
+    FontManager::Instance().LoadFont("default", "HomeVideoBold-R90Dv.ttf", 24);
 
     bool gameRunning = true;
     SDL_Event event;
@@ -73,7 +101,7 @@ int main(int argc, char* args[]) {
 
         Entity::Spawn(event, entities, redTexture, windowWidth, windowHeight, &isOutOfBounds);
 
-        Collisions::checkCollisions(entities, projectile, player);
+        Collisions::checkCollisions(entities, projectile, player, audio);
         Collisions::applyGravity(projectile, gravityStrength);
 
         for (auto& proj : projectile) {
@@ -82,21 +110,30 @@ int main(int argc, char* args[]) {
 
         window.clear();
 
-
+        // Render all projectiles and entities
         for (auto& proj : projectile) {
             window.render(proj);
         }
-
         for (auto& entity : entities) {
             window.render(entity);
         }
 
         player.render(window.getRenderer());
+
+        // Fonts
+        SDL_Color white = { 255, 255, 255 };
+        FontManager::Instance().RenderScore("default", white, 60, 20, window.getRenderer(), player);
+
         window.display();
     }
 
+    // Clean up 
+    FontManager::Instance().CleanUp();
+    audio.cleanup();
     window.cleanUp();
+    TTF_Quit();
+    IMG_Quit();
     SDL_Quit();
+
     return 0;
 }
-

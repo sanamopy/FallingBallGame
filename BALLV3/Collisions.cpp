@@ -7,7 +7,7 @@ bool Collisions::contact(const SDL_Rect& rectA, const SDL_Rect& rectB)
 }
 
 //PITA
-bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Entity>& projectiles, Player& player)
+bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Entity>& projectiles, Player& player, Audio& audio)
 {
     bool collisionDetected = false;
 
@@ -26,7 +26,8 @@ bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Enti
 
                 if (!entityIt->isWall && entityIt->takeDamage()) {
                     entityIt = entities.erase(entityIt);
-                    player.incrementScore();              // Increment score here
+                    player.incrementScore(); 
+                    audio.play();
 
 
                 }
@@ -45,13 +46,13 @@ bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Enti
     return collisionDetected;
 }
 
+float Collisions::bounceMultiplier = 0.6f;
+
 void Collisions::bounceProjectile(Entity& projectile, const SDL_Rect& entityHitbox) 
 {
     SDL_Rect projectileHitbox = projectile.getHitbox();
 
     // funny amplify bouncy
-    const float bounceMultiplier = 1.0f; 
-
     if (projectileHitbox.x + projectileHitbox.w >= entityHitbox.x &&
         projectileHitbox.x <= entityHitbox.x + entityHitbox.w) 
     {
@@ -73,4 +74,12 @@ void Collisions::applyGravity(std::vector<Entity>& projectiles, float gravityStr
             projectile.setVelocityY(newVelocityY); 
         }
     }
+}
+
+void Collisions::setBounceMultiplier(float newMultiplier) {
+    bounceMultiplier = newMultiplier;
+}
+
+float Collisions::getBounceMultiplier() {
+    return bounceMultiplier;
 }

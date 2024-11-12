@@ -3,53 +3,53 @@
 
 
 Entity::Entity(float p_x, float p_y, SDL_Texture* p_text, float velX, float velY, bool projectile, int hp, bool is_wall)
-	: x(p_x), y(p_y), texture(p_text), velocityX(velX), velocityY(velY), isProjectile(projectile), health(hp), isWall(is_wall)
+    : x(p_x), y(p_y), texture(p_text), velocityX(velX), velocityY(velY), isProjectile(projectile), health(hp), isWall(is_wall)
 {
-	currentFrame.x = 0;
-	currentFrame.y = 0;
-	if (isProjectile) {
-		currentFrame.w = 32;
-		currentFrame.h = 32;
-	}
-	else if (isWall) {
-		currentFrame.w = 50;
-		currentFrame.h = 840;
+    currentFrame.x = 0;
+    currentFrame.y = 0;
+    if (isProjectile) {
+        currentFrame.w = 32;
+        currentFrame.h = 32;
+    }
+    else if (isWall) {
+        currentFrame.w = 50;
+        currentFrame.h = 840;
 
-	}
-	else {
-		currentFrame.w = 64;
-		currentFrame.h = 64;
-	}
+    }
+    else {
+        currentFrame.w = 64;
+        currentFrame.h = 64;
+    }
 }
 
 
 bool Entity::takeDamage()
 {
-	if (health > 0) {
-		health -= 1;
-	}
-	return health <= 0;
+    if (health > 0) {
+        health -= 1;
+    }
+    return health <= 0;
 
 }
 
 
 void Entity::updatePosition() {
-	if (isProjectile) {
-		y += velocityY;  // Move the projectile by its velocity
-		x += velocityX;
-	}
+    if (isProjectile) {
+        y += velocityY;  // Move the projectile by its velocity
+        x += velocityX;
+    }
 }
 
 
 void Entity::render(SDL_Renderer* renderer)
 {
-	SDL_Rect destRect = {
-		static_cast<int>(x),
-		static_cast<int>(y),
-		currentFrame.w,
-		currentFrame.h
-	};
-	SDL_RenderCopy(renderer, texture, &currentFrame, &destRect);
+    SDL_Rect destRect = {
+        static_cast<int>(x),
+        static_cast<int>(y),
+        currentFrame.w,
+        currentFrame.h
+    };
+    SDL_RenderCopy(renderer, texture, &currentFrame, &destRect);
 }
 
 //PITA
@@ -60,8 +60,8 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
     static int placeholder = 2;
     static bool initialSpawn = false;
     int spawnWidth = windowWidth - 128;
-    int spawnHeight = windowHeight / 4 + 10;
-    float minimumDistance = 128.0f; 
+    int spawnHeight = windowHeight / 6;
+    float minimumDistance = 128.0f;
     int maxAttempts = 10;
 
     if (!initialSpawn)
@@ -128,7 +128,7 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
             if (!positionFound && !entities.empty()) {
                 randomX = static_cast<float>(rand() % spawnWidth);
                 //randomY = static_cast<float>(windowHeight - spawnHeight  - (rand() % spawnHeight));
-                randomY = static_cast<float>(windowHeight + spawnHeight  - (rand() % spawnHeight));
+                randomY = static_cast<float>(windowHeight + spawnHeight - (rand() % spawnHeight));
             }
 
             entities.emplace_back(randomX, randomY, entityTexture, 0.0f, false);
@@ -138,15 +138,12 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
             entitiesToSpawn++;
         }
         placeholder++;
-        
-
-        std::cout << "SPAWNING : " << entitiesToSpawn  << std::endl;
 
         for (auto& entity : entities)
         {
             if (!entity.isProjectile && !entity.isWall)
             {
-                entity.y -= 96.0f;
+                entity.y -= 128.0f;
             }
         }
     }
@@ -155,70 +152,70 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
 
 SDL_Rect Entity::getHitbox() const
 {
-	SDL_Rect rect;
-	rect.x = static_cast<int>(x);
-	rect.y = static_cast<int>(y);
-	rect.w = currentFrame.w;
-	rect.h = currentFrame.h;
-	return rect;
+    SDL_Rect rect;
+    rect.x = static_cast<int>(x);
+    rect.y = static_cast<int>(y);
+    rect.w = currentFrame.w;
+    rect.h = currentFrame.h;
+    return rect;
 }
 
 void Entity::setVelocityX(float vx) {
-	velocityX = vx;
+    velocityX = vx;
 }
 
 void Entity::setVelocityY(float vy) {
-	velocityY = vy;
+    velocityY = vy;
 }
 
 
 
 float Entity::getX()
 {
-	return x;
+    return x;
 }
 
 float Entity::getY()
 {
-	return y;
+    return y;
 }
 
 bool Entity::getisProjectile() const
 {
-	return isProjectile;
+    return isProjectile;
 
 }
 float Entity::getVelocityY()
 {
-	return velocityY;
+    return velocityY;
 }
 float Entity::getVelocityX()
 {
-	return velocityX;
+    return velocityX;
 }
 int Entity::getHealth()
 {
-	return health;
+    return health;
 }
 
 SDL_Texture* Entity::getTexture()
 {
-	return texture;
+    return texture;
 }
 
-SDL_Rect Entity::getCurrentFrame() const 
+SDL_Rect Entity::getCurrentFrame() const
 {
-	return currentFrame;
+    return currentFrame;
 }
 
 
 bool Entity::getHasCollided() const {
-	return hasCollided;
+    return hasCollided;
 }
 
 void Entity::setHasCollided(bool state) {
-	hasCollided = state;
+    hasCollided = state;
 }
 SDL_Rect& Entity::getCurrentFrame() {
-	return currentFrame;
+    return currentFrame;
 }

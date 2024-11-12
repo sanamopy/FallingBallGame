@@ -21,7 +21,8 @@ private:
     ~FontManager() = default;
     FontManager(const FontManager&) = delete;
     FontManager& operator=(const FontManager&) = delete;
-
+    int lastScore = -1;
+    SDL_Texture* cachedScoreTexture = nullptr;
     std::map<std::string, TTF_Font*> fonts;
 };
 

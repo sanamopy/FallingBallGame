@@ -78,9 +78,13 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <Font Include="HomeVideoBold-R90Dv.ttf" />
+    <Font Include="HomeVideoBold-R90Dv.ttf">
+      <Filter>Resource Files</Filter>
+    </Font>
   </ItemGroup>
   <ItemGroup>
-    <Media Include="hitSound.mp3" />
+    <Media Include="hitSound.mp3">
+      <Filter>Resource Files</Filter>
+    </Media>
   </ItemGroup>
 </Project>

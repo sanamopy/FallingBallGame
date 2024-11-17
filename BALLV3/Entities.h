@@ -7,8 +7,10 @@
 #include <vector>
 #include <random>
 #include <ctime>
+
 const int max_entities = 32;
-class Entity //every entity in game
+
+class Entity 
 {
 public:
 	Entity(float p_x, float p_y, SDL_Texture* p_text,

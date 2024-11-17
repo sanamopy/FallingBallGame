@@ -1,7 +1,7 @@
 #include "Audio.h"
 #include <iostream>
 
-Audio::Audio() : music(nullptr) {}
+Audio::Audio() : hitSound(nullptr) {}
 
 Audio::~Audio() {
     cleanup();
@@ -22,19 +22,29 @@ bool Audio::initialize() {
 }
 
 bool Audio::loadMp3(const std::string& filePath) {
-    music = Mix_LoadMUS(filePath.c_str());
-    if (!music) {
-        std::cout << " MP3 file no good : " << Mix_GetError() << std::endl;
+    hitSound = Mix_LoadMUS(filePath.c_str());
+    deathSound = Mix_LoadMUS(filePath.c_str());
+    if (!hitSound) {
+        std::cout << " MP3/1 file no good : " << Mix_GetError() << std::endl;
         return false;
     }
+    if (!deathSound)
+    {
+        std::cout << "MP3/2 file no good: " << Mix_GetError() << std::endl;
+        return false;
+    }
+
 
     return true;
 }
 
 void Audio::play() {
-    if (music) {
+    if (hitSound) {
         //hitsound
-        Mix_PlayMusic(music, 1);
+        Mix_PlayMusic(hitSound, 1);
+    }
+    if (deathSound) {
+        Mix_PlayMusic(deathSound, 1);
     }
     else {
         std::cout << "no music xddxdxd" << std::endl;
@@ -42,9 +52,13 @@ void Audio::play() {
 }
 
 void Audio::cleanup() {
-    if (music) {
-        Mix_FreeMusic(music);
-        music = nullptr;
+    if (hitSound) {
+        Mix_FreeMusic(hitSound);
+        hitSound = nullptr;
+    }
+    if (deathSound) {
+        Mix_FreeMusic(deathSound);
+        deathSound = nullptr;
     }
 
     Mix_CloseAudio();

@@ -16,7 +16,8 @@ public:
     void cleanup();
 
 private:
-    Mix_Music* music;
+    Mix_Music* hitSound;
+    Mix_Music* deathSound;
 };
 
 #endif // AUDIO_H

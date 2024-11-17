@@ -1,5 +1,5 @@
 #include "PowerUp.h"
-#include <cstdlib> // for rand()
+#include <cstdlib> 
 
 SDL_Texture* PowerUp::powerUpTexture = nullptr; 
 int PowerUp::spawnCounter = 0; 
@@ -14,13 +14,9 @@ void PowerUp::setTexture(SDL_Texture* texture) {
 }
 
 void PowerUp::applyEffect(Player& player) {
-    if (type == 0) {
-        player.setMaxProjectiles(player.getMaxProjectiles() + 1);
-    }
-    else if (type == 1) {
-        float currentBounce = Collisions::getBounceMultiplier();
-        Collisions::setBounceMultiplier(currentBounce + 0.2f);
-    }
+    
+    player.setMaxProjectiles(player.getMaxProjectiles() + 1);
+    
 }
 
 void PowerUp::render(SDL_Renderer* renderer) {

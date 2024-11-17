@@ -5,10 +5,14 @@
 #include <SDL_image.h>
 #include <vector>
 #include <iostream>
+#include <chrono>
+#include <thread>
+#include <unordered_map>
+
 #include "Entities.h"
 #include "Collisions.h"
-class Entity;
-class PowerUp;
+#include "Audio.h"
+
 
 class Player
 {
@@ -18,8 +22,9 @@ public:
 	void aiming() const;
 	void render(SDL_Renderer* renderer);
 
-	void shoot(SDL_Event& event, std::vector<Entity>& projectile, SDL_Texture* projectileTexture, int velocity);	
-	static bool outOfBounds(std::vector<Entity>& projectile, int& windowWidth, int& windowHeight, bool* detectOutOfBounds);
+	void fireProjectile(std::vector<Entity>& projectile, SDL_Texture* projectileTexture, int velocity) const;
+	void shoot(SDL_Event& event, std::vector<Entity>& projectile, SDL_Texture* projectileTexture, int velocity) const;	
+	static bool outOfBounds(std::vector<Entity>& projectile, int& windowWidth, int& windowHeight, bool* detectOutOfBounds, Audio& audio2);
 	void setMaxProjectiles(int newMax);
 
 	SDL_Rect getRect() const;
@@ -41,7 +46,10 @@ public:
 
 private:
 	int score = 0;
-	int maxProjectiles = 1;
+	int maxProjectiles = 3;
+	const int maxPress = 1;
+	int lastShootTime = 0;
+
 	bool detectOutOfBounds = false;
 	float projectileX;
 	float projectileY;

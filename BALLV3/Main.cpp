@@ -21,27 +21,41 @@ class Entity;
 int main(int argc, char* args[]) {
     std::cout << "Hello world" << std::endl;
 
+    //Image
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) > 0) {
         std::cout << "SDL initialization failed: " << SDL_GetError() << std::endl;
     }
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
         std::cout << "Image initialization failed: " << SDL_GetError() << std::endl;
     }
+    //Font
     if (TTF_Init() == -1) {
         std::cout << "TTF initialization failed: " << TTF_GetError() << std::endl;
     }
 
     // Initialize Audio
-    Audio audio;
-    if (!audio.initialize()) {
-        std::cout << "NO LOAD AUDIO " << Mix_GetError() << std::endl;
+    Audio audio1;
+    if (!audio1.initialize()) {
+        std::cout << "NO LOAD AUDIO 2 " << Mix_GetError() << std::endl;
         return -1;
     }
 
-    if (!audio.loadMp3("hitSound.mp3")) {
-        std::cout << "NO LOAD MP3" << Mix_GetError() << std::endl;
+    if (!audio1.loadMp3("hitSound.mp3")) {
+        std::cout << "NO LOAD MP3/1" << Mix_GetError() << std::endl;
         return -1;
     }
+
+    Audio audio2;
+    if (!audio2.initialize())
+    {
+        std::cout << "NO LOAD AUDIO2" << Mix_GetError() << std::endl;
+        return -1;
+    }
+    if (!audio2.loadMp3("deathSound.mp3")) {
+        std::cout << "NO LOAD MP3/2" << Mix_GetError() << std::endl;
+        return -1;
+    }
+
 
     const int maxFPS = 32;
     const int frame_time = 1000 / maxFPS;
@@ -59,8 +73,8 @@ int main(int argc, char* args[]) {
     SDL_Texture* redTexture = window.loadTexture("PNG1-RED.png");
     SDL_Texture* projectileTexture = window.loadTexture("PNG1-GREEN.png");
 
-    SDL_Texture* powerUpTexture = window.loadTexture("PNG1-PURPLE.png"); // Load Power-Up texture
-    PowerUp::setTexture(powerUpTexture); // Set Power-Up texture
+    SDL_Texture* powerUpTexture = window.loadTexture("PNG1-PURPLE.png"); 
+    PowerUp::setTexture(powerUpTexture); 
 
     SDL_Surface* mouse = IMG_Load("PNG1-PINK.png");
     std::vector<Entity> entities;
@@ -97,11 +111,11 @@ int main(int argc, char* args[]) {
             SDL_Delay(frame_time - frame);
         }
 
-        Player::outOfBounds(projectile, windowWidth, windowHeight, &isOutOfBounds);
+        Player::outOfBounds(projectile, windowWidth, windowHeight, &isOutOfBounds, audio2);
 
         Entity::Spawn(event, entities, redTexture, windowWidth, windowHeight, &isOutOfBounds);
 
-        Collisions::checkCollisions(entities, projectile, player, audio);
+        Collisions::checkCollisions(entities, projectile, player, audio1);
         Collisions::applyGravity(projectile, gravityStrength);
 
         for (auto& proj : projectile) {
@@ -129,7 +143,8 @@ int main(int argc, char* args[]) {
 
     // Clean up 
     FontManager::Instance().CleanUp();
-    audio.cleanup();
+    audio1.cleanup();
+    audio2.cleanup();
     window.cleanUp();
     TTF_Quit();
     IMG_Quit();

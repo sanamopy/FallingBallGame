@@ -50,20 +50,40 @@ void Player::fireProjectile(std::vector<Entity>& projectile, SDL_Texture* projec
 
 void Player::shoot(SDL_Event& event, std::vector<Entity>& projectiles, SDL_Texture* projectileTexture, int velocity) const
 {
-	if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE)
+	static bool isFiring = false;
+	static Uint32 lastFireTime = 0;
+	static int firedProjectiles = 0;
+	const Uint32 FIRE_DELAY = 200;
+	
+
+	if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE && !isFiring)
 	{
-		while (projectiles.size() < maxProjectiles)
+		isFiring = true;
+		lastFireTime = SDL_GetTicks();
+		firedProjectiles = 1;
+		fireProjectile(projectiles, projectileTexture, velocity);
+
+	}
+
+	if (isFiring)
+	{
+		Uint32 currentTime = SDL_GetTicks();
+
+		if (firedProjectiles < maxProjectiles && (currentTime - lastFireTime >= FIRE_DELAY))
 		{
 			fireProjectile(projectiles, projectileTexture, velocity);
-			//ask prof for help cuz idfk 
+			lastFireTime = currentTime; 
+			firedProjectiles++;   
 		}
 
-		if (!projectiles.empty())
+		if (firedProjectiles >= maxProjectiles)
 		{
-			std::cout << "Projectile size = " << projectiles.size() << std::endl;
+			isFiring = false;
+			firedProjectiles = 0;
 		}
 	}
 }
+
 
 
 

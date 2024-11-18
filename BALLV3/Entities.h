@@ -43,9 +43,13 @@ public:
 	float getVelocityX();
 	int getHealth();
 	bool getHasCollided() const;
-	void setHasCollided(bool state);
+	void setHasCollided(bool);
 	SDL_Rect& getCurrentFrame();
 	bool isWall;
+
+
+	void setX(float);
+	void setY(float);
 
 
 private:

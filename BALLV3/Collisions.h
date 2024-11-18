@@ -24,14 +24,11 @@ public:
 
     static void applyGravity(std::vector<Entity>& projectiles, float gravityStrength);
 
-    static void setBounceMultiplier(float newMultiplier);
 
-    static float getBounceMultiplier();
 
 
 
 private:
-    static float bounceMultiplier;
 };
 
 #endif

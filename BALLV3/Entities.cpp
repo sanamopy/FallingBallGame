@@ -35,7 +35,7 @@ bool Entity::takeDamage()
 
 void Entity::updatePosition() {
     if (isProjectile) {
-        y += velocityY;  // Move the projectile by its velocity
+        y += velocityY;
         x += velocityX;
     }
 }
@@ -64,6 +64,9 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
     float minimumDistance = 128.0f;
     int maxAttempts = 10;
 
+    /*check spawning location spaced out
+    if it doesn't find any, spawn randomly*/
+
     if (!initialSpawn)
     {
         for (int i = 0; i < 3; i++)
@@ -77,7 +80,6 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
                 randomY = static_cast<float>(windowHeight - spawnHeight - (rand() % spawnHeight));
                 positionFound = true;
 
-                // Check distance from all existing entities
                 for (const auto& entity : entities) {
                     float dx = entity.x - randomX;
                     float dy = entity.y - randomY;
@@ -89,9 +91,8 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
                 attempts++;
             }
 
-            // Fallback: Adjust position if max attempts reached
             if (!positionFound && !entities.empty()) {
-                randomX = static_cast<float>(rand() % spawnWidth); // Small offset to avoid overlap
+                randomX = static_cast<float>(rand() % spawnWidth); 
                 randomY = static_cast<float>(windowHeight - spawnHeight - (rand() % spawnHeight));
             }
 
@@ -110,7 +111,6 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
 
             while (!positionFound && attempts < maxAttempts) {
                 randomX = static_cast<float>(rand() % spawnWidth);
-                //randomY = static_cast<float>(windowHeight - spawnHeight  - (rand() % spawnHeight));
                 randomY = static_cast<float>(windowHeight + (rand() % spawnHeight));
                 positionFound = true;
 
@@ -127,7 +127,6 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
 
             if (!positionFound && !entities.empty()) {
                 randomX = static_cast<float>(rand() % spawnWidth);
-                //randomY = static_cast<float>(windowHeight - spawnHeight  - (rand() % spawnHeight));
                 randomY = static_cast<float>(windowHeight + spawnHeight - (rand() % spawnHeight));
             }
 
@@ -218,4 +217,12 @@ void Entity::setHasCollided(bool state) {
 }
 SDL_Rect& Entity::getCurrentFrame() {
     return currentFrame;
+}
+
+void Entity::setX(float newX) {
+    x = newX;
+}
+
+void Entity::setY(float newY) {
+    y = newY;
 }

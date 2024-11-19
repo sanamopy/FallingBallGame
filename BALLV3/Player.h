@@ -5,9 +5,8 @@
 #include <SDL_image.h>
 #include <vector>
 #include <iostream>
-#include <chrono>
-#include <thread>
-#include <unordered_map>
+#include <ctime>
+
 
 #include "Entities.h"
 #include "Collisions.h"
@@ -29,7 +28,7 @@ public:
 
 	SDL_Rect getRect() const;
 
-
+	
 	bool getp_OutOfBounds() const;
 	float getProjectileX() const;
 	float getProjectileY() const;
@@ -48,7 +47,6 @@ private:
 	int score = 0;
 	int maxProjectiles = 3;
 	const int maxPress = 1;
-	int lastShootTime = 0;
 
 	bool detectOutOfBounds = false;
 	float projectileX;

@@ -7,8 +7,6 @@ Player::Player(int width, int height, SDL_Texture* texture, int& windowWidth, in
 	rect.y = 64;
 }
 
-
-
 void Player::aiming() const
 {
 	int mouseX, mouseY;
@@ -41,49 +39,54 @@ void Player::fireProjectile(std::vector<Entity>& projectile, SDL_Texture* projec
 	int velocityX = velocity * cos(angle);
 	int velocityY = velocity * sin(angle);
 
-	// Spawn the projectile
+
 	projectile.emplace_back(projectileX, projectileY, projectileTexture, velocityX, velocityY, true);
-	std::cout << projectile.size() << std::endl; 
-	//projectile size not being done properly 
+	//std::cout << projectile.size() << std::endl;
 
 }
 
 void Player::shoot(SDL_Event& event, std::vector<Entity>& projectiles, SDL_Texture* projectileTexture, int velocity) const
 {
 	static bool isFiring = false;
-	static Uint32 lastFireTime = 0;
 	static int firedProjectiles = 0;
-	const Uint32 FIRE_DELAY = 200;
-	
+	static clock_t lastFireTime = 0;
 
+	const double fireDelay = 0.09;
+	/*
+	press space > shoot > wait 0.09 > shoot again until firedProjectile >= maxProjectile
+	keep fireDelay low to hide inconsistency errors
+	SDL_Delay() and SDL_Getticks() doesn't work
+	delay makes everything shoot at once, i cant fix it (if can fix that then use delay cuz its consistent)
+	SDL_Getticks is stupidly inconsistent unless change FPS (don't do that)
+	*/
+	
 	if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE && !isFiring)
 	{
 		isFiring = true;
-		lastFireTime = SDL_GetTicks();
-		firedProjectiles = 1;
-		fireProjectile(projectiles, projectileTexture, velocity);
-
+		firedProjectiles = 0;
+		lastFireTime = clock();
+		fireProjectile(projectiles, projectileTexture, velocity); 
+		firedProjectiles++;
 	}
 
 	if (isFiring)
 	{
-		Uint32 currentTime = SDL_GetTicks();
+		clock_t currentTime = clock();
+		double elapsedTime = double(currentTime - lastFireTime) / CLOCKS_PER_SEC;
 
-		if (firedProjectiles < maxProjectiles && (currentTime - lastFireTime >= FIRE_DELAY))
+		if (elapsedTime >= fireDelay)
 		{
 			fireProjectile(projectiles, projectileTexture, velocity);
+			firedProjectiles++;
 			lastFireTime = currentTime; 
-			firedProjectiles++;   
-		}
 
-		if (firedProjectiles >= maxProjectiles)
-		{
-			isFiring = false;
-			firedProjectiles = 0;
+			if (firedProjectiles >= maxProjectiles)
+			{
+				isFiring = false; 
+			}
 		}
 	}
 }
-
 
 
 
@@ -108,15 +111,14 @@ bool Player::outOfBounds(std::vector<Entity>& projectile, int& windowWidth, int&
 			it = projectile.erase(it);
 			*detectOutOfBounds = true;
 			audio2.play();
+			//std::cout << "Projectiles remaining: " << projectile.size() << "\n";
+
 		}
 		else {
 			++it;
 		}
 	}
 
-	// Debugging: Check remaining projectiles
-	// std::cout << "Projectiles remaining: " << projectile.size() << "\n";
-	// Debugging: Output shooting state
 
 
 	return *detectOutOfBounds;
@@ -171,64 +173,3 @@ float Player::getVelocityY() const
 {
 	return velocityY;
 }
-
-/*void Player::shoot(SDL_Event& event, std::vector<Entity>& projectile, SDL_Texture* projectileTexture, int velocity) const
-{
-	// Static variables to manage shooting
-	static Uint32 lastShotTime = 0;  // Time of the last shot
-	static int shotsFired = 0;      // Number of shots fired in the current sequence
-	static bool isShooting = false; // Whether a shooting sequence is active
-
-	// Current time
-	Uint32 currentTime = SDL_GetTicks();
-
-	// Delay between shots
-	const Uint32 shotInterval = 100; // 100ms delay between shots
-
-	// Start a new shooting sequence if spacebar is pressed
-	if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_SPACE && !isShooting)
-	{
-		isShooting = true;    // Begin shooting sequence
-		shotsFired = 0;       // Reset shot counter
-		lastShotTime = currentTime; // Set the initial timer
-
-		fireProjectile(projectile, projectileTexture, velocity); // Fire the first shot
-		shotsFired++;
-	}
-
-	// Handle subsequent shots in the sequence
-
-	if (isShooting)
-	{
-		if (shotsFired < maxProjectiles && currentTime - lastShotTime >= shotInterval)
-		{
-			fireProjectile(projectile, projectileTexture, velocity); // Fire the next shot
-			shotsFired++;
-			lastShotTime = currentTime; // Update the last shot time
-			std::cout << "Projectile size: " << projectile.size() << std::endl;
-		}
-
-		// End the shooting sequence if the max projectiles have been fired
-		if (shotsFired >= maxProjectiles)
-		{
-			isShooting = false; // Reset shooting state
-		}
-	}
-
-
-	if (isShooting && (shotsFired < maxProjectiles || !projectile.empty()) && (currentTime - lastShotTime >= shotInterval))
-	{
-		fireProjectile(projectile, projectileTexture, velocity); // Fire next shot
-		shotsFired++;
-		lastShotTime = currentTime; // Update the timer
-		std::cout << "Projectil size: " << projectile.size() << std::endl;
-	}
-
-	// End the shooting sequence only after all shots have been fired
-	if (shotsFired == maxProjectiles)
-	{
-		isShooting = false;
-	}
-	//std::cout << "Projectil size end of: " << projectile.size() << std::endl;
-
-}*/

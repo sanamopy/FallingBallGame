@@ -152,17 +152,17 @@ void Entity::Spawn(SDL_Event& event, std::vector<Entity>& entities, SDL_Texture*
 SDL_Rect Entity::getHitbox() const
 {
     SDL_Rect rect;
-    if (isWall)
+    if (isProjectile)
     {
         rect.x = static_cast<int>(x);
         rect.y = static_cast<int>(y);
-        rect.w = currentFrame.w + 10;
+        rect.w = currentFrame.w;
         rect.h = currentFrame.h;
     }
     else {
         rect.x = static_cast<int>(x);
         rect.y = static_cast<int>(y);
-        rect.w = currentFrame.w;
+        rect.w = currentFrame.w + 10; //KEEP AT 10 to avoid jittering
         rect.h = currentFrame.h;
     }
     return rect;

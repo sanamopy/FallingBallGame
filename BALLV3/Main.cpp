@@ -116,6 +116,7 @@ int main(int argc, char* args[]) {
         Entity::Spawn(event, entities, redTexture, windowWidth, windowHeight, &isOutOfBounds);
 
         Collisions::checkCollisions(entities, projectile, player, audio1);
+
         Collisions::applyGravity(projectile, gravityStrength);
 
         for (auto& proj : projectile) {
@@ -124,7 +125,6 @@ int main(int argc, char* args[]) {
 
         window.clear();
 
-        // Render all projectiles and entities
         for (auto& proj : projectile) {
             window.render(proj);
         }
@@ -134,14 +134,12 @@ int main(int argc, char* args[]) {
 
         player.render(window.getRenderer());
 
-        // Fonts
         SDL_Color white = { 255, 255, 255 };
         FontManager::Instance().RenderScore("default", white, 60, 20, window.getRenderer(), player);
 
         window.display();
     }
 
-    // Clean up 
     FontManager::Instance().CleanUp();
     audio1.cleanup();
     audio2.cleanup();

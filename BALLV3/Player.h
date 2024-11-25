@@ -45,7 +45,7 @@ public:
 
 private:
 	int score = 0;
-	int maxProjectiles = 3;
+	int maxProjectiles = 1;
 	const int maxPress = 1;
 
 	bool detectOutOfBounds = false;

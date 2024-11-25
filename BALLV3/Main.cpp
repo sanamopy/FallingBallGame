@@ -87,7 +87,6 @@ int main(int argc, char* args[]) {
 
     window.addWalls(entities);
 
-    // Load font using FontManager
     FontManager::Instance().LoadFont("default", "HomeVideoBold-R90Dv.ttf", 24);
 
     bool gameRunning = true;

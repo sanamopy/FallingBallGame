@@ -1,6 +1,7 @@
 #include "Collisions.h"
 #include "Entities.h"
 
+//del?
 bool Collisions::contact(const SDL_Rect& rectA, const SDL_Rect& rectB)
 {
     return SDL_HasIntersection(&rectA, &rectB);
@@ -18,7 +19,7 @@ bool Collisions::checkCollisions(std::vector<Entity>& entities, std::vector<Enti
             const SDL_Rect entityHitbox = entityIt->getHitbox();
 
             if (!entityIt->getisProjectile() && contact(projectileHitbox, entityHitbox)) {
-                //std::cout << "COLLISION TRES BIEN!" << std::endl;
+                //std::cout << "COLLISION TRES BIEN!" << projectile.getHitbox() << std::endl;
 
                 bounceProjectile(projectile, entityHitbox);
 

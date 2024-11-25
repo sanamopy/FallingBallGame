@@ -158,6 +158,7 @@ SDL_Rect Entity::getHitbox() const
         rect.y = static_cast<int>(y);
         rect.w = currentFrame.w;
         rect.h = currentFrame.h;
+        
     }
     else {
         rect.x = static_cast<int>(x);

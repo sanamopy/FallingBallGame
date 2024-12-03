@@ -1,4 +1,4 @@
-#include "PowerUp.h"
+/*#include "PowerUp.h"
 #include <cstdlib> 
 
 SDL_Texture* PowerUp::powerUpTexture = nullptr; 
@@ -15,7 +15,7 @@ void PowerUp::setTexture(SDL_Texture* texture) {
 
 void PowerUp::applyEffect(Player& player) {
     
-    player.setMaxProjectiles(player.getMaxProjectiles() + 1);
+    player.updateMaxProj();
     
 }
 
@@ -23,7 +23,7 @@ void PowerUp::render(SDL_Renderer* renderer) {
     SDL_RenderCopy(renderer, texture, nullptr, &rect);
 }
 
-bool PowerUp::checkCollisionWithPlayer(const Player& player) {
+bool PowerUp::checkCollisionWithPlayer(const Player& player) const {
     SDL_Rect playerRect = player.getRect();
     return SDL_HasIntersection(&rect, &playerRect);
 }
@@ -40,3 +40,4 @@ void PowerUp::resetSpawnCounter() {
 SDL_Texture* PowerUp::getTexture() {
     return powerUpTexture;
 }
+*/

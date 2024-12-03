@@ -64,16 +64,37 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="PNG1-BLUE.png">
+    <Image Include="PNG1-PLAYER.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="PNG1-GREEN.png">
+    <Image Include="PNG1-PROJECTILE.png">
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="PNG1-PINK.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="PNG1-RED.png">
+    <Image Include="PNG-WALL.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="PNG1-PURPLE.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="PNG-RED.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="PNG-GREEN.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="PNG-MAGENTA.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="PNG-PURPLE.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="PNG-YELLOW.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="PNG1-CYAN.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
@@ -83,7 +104,13 @@
     </Font>
   </ItemGroup>
   <ItemGroup>
-    <Media Include="hitSound.mp3">
+    <Media Include="levelUpSound.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="deathSound.wav">
+      <Filter>Resource Files</Filter>
+    </Media>
+    <Media Include="hitSound.wav">
       <Filter>Resource Files</Filter>
     </Media>
   </ItemGroup>

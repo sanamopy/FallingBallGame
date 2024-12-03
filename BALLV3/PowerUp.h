@@ -11,7 +11,7 @@ public:
 
     void applyEffect(Player& player);
     void render(SDL_Renderer* renderer);
-    bool checkCollisionWithPlayer(const Player& player);
+    bool checkCollisionWithPlayer(const Player& player) const;
 
     static void setTexture(SDL_Texture* texture);
     static bool shouldSpawn();    

@@ -33,26 +33,17 @@ int main(int argc, char* args[]) {
         std::cout << "TTF initialization failed: " << TTF_GetError() << std::endl;
     }
 
-    // Initialize Audio
-    Audio audio1;
-    if (!audio1.initialize()) {
-        std::cout << "NO LOAD AUDIO 2 " << Mix_GetError() << std::endl;
+    Audio audio;
+
+    // Initialize audio
+    if (!audio.initialize()) {
+        std::cerr << "Failed to initialize audio: " << Mix_GetError() << std::endl;
         return -1;
     }
 
-    if (!audio1.loadMp3("hitSound.mp3")) {
-        std::cout << "NO LOAD MP3/1" << Mix_GetError() << std::endl;
-        return -1;
-    }
-
-    Audio audio2;
-    if (!audio2.initialize())
-    {
-        std::cout << "NO LOAD AUDIO2" << Mix_GetError() << std::endl;
-        return -1;
-    }
-    if (!audio2.loadMp3("deathSound.mp3")) {
-        std::cout << "NO LOAD MP3/2" << Mix_GetError() << std::endl;
+    // Load audio files
+    if (!audio.loadMp3("hitSound.wav", "deathSound.wav", "levelUpSound.wav")) {
+        std::cerr << "Failed to load audio files: " << Mix_GetError() << std::endl;
         return -1;
     }
 
@@ -69,19 +60,20 @@ int main(int argc, char* args[]) {
 
     RenderWindow window("window", windowWidth, windowHeight);
 
-    SDL_Texture* blueTexture = window.loadTexture("PNG1-BLUE.png");
-    SDL_Texture* redTexture = window.loadTexture("PNG1-RED.png");
-    SDL_Texture* projectileTexture = window.loadTexture("PNG1-GREEN.png");
+    SDL_Texture* blueTexture = window.loadTexture("PNG1-PLAYER.png");
+    SDL_Texture* projectileTexture = window.loadTexture("PNG1-PROJECTILE.png");
 
-    SDL_Texture* powerUpTexture = window.loadTexture("PNG1-PURPLE.png"); 
-    PowerUp::setTexture(powerUpTexture); 
+    //SDL_Texture* powerUpTexture = window.loadTexture("PNG1-PURPLE.png"); 
+    //PowerUp::setTexture(powerUpTexture); 
 
-    SDL_Surface* mouse = IMG_Load("PNG1-PINK.png");
     std::vector<Entity> entities;
     std::vector<Entity> projectile;
     std::vector<PowerUp> powerUps;
 
+    SDL_Surface* mouse = IMG_Load("PNG1-PINK.png");
     SDL_Cursor* cursor = SDL_CreateColorCursor(mouse, 0, 0);
+    SDL_FreeSurface(mouse);
+
 
     Player player(300, 300, blueTexture, windowWidth, windowHeight);
 
@@ -91,6 +83,18 @@ int main(int argc, char* args[]) {
 
     bool gameRunning = true;
     SDL_Event event;
+
+    //move texture choice into entities.cpp
+    SDL_Texture* redTexture = window.loadTexture("PNG-RED.png");
+    SDL_Texture* greenTexture = window.loadTexture("PNG-GREEN.png");
+    SDL_Texture* magentaTexture = window.loadTexture("PNG-MAGENTA.png");
+    SDL_Texture* purpleTexture = window.loadTexture("PNG-PURPLE.png");
+    SDL_Texture* yellowTexture = window.loadTexture("PNG-YELLOW.png");
+
+    SDL_Texture* textures[] = { redTexture, greenTexture, magentaTexture, purpleTexture, yellowTexture };
+
+    static int spawnCounter = 0;
+
 
     while (gameRunning) {
         framestart = SDL_GetTicks();
@@ -110,11 +114,13 @@ int main(int argc, char* args[]) {
             SDL_Delay(frame_time - frame);
         }
 
-        Player::outOfBounds(projectile, windowWidth, windowHeight, &isOutOfBounds, audio2);
+        Player::outOfBounds(projectile, windowWidth, windowHeight, &isOutOfBounds, audio);
 
-        Entity::Spawn(event, entities, redTexture, windowWidth, windowHeight, &isOutOfBounds);
+        SDL_Texture* chosenTexture = textures[spawnCounter % 5];
+        Entity::Spawn(event, entities, chosenTexture, windowWidth, windowHeight, &isOutOfBounds);
+        spawnCounter++; // Move to the next texture
 
-        Collisions::checkCollisions(entities, projectile, player, audio1);
+        Collisions::checkCollisions(entities, projectile, player, audio, audio);
 
         Collisions::applyGravity(projectile, gravityStrength);
 
@@ -122,12 +128,14 @@ int main(int argc, char* args[]) {
             proj.updatePosition();
         }
 
-        window.clear();
+        SDL_SetRenderDrawColor(window.getRenderer(), 128, 128, 128, 255);
+        SDL_RenderClear(window.getRenderer());
 
         for (auto& proj : projectile) {
             window.render(proj);
         }
         for (auto& entity : entities) {
+
             window.render(entity);
         }
 
@@ -140,8 +148,7 @@ int main(int argc, char* args[]) {
     }
 
     FontManager::Instance().CleanUp();
-    audio1.cleanup();
-    audio2.cleanup();
+    audio.cleanup();
     window.cleanUp();
     TTF_Quit();
     IMG_Quit();

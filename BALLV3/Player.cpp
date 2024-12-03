@@ -91,13 +91,8 @@ void Player::shoot(SDL_Event& event, std::vector<Entity>& projectiles, SDL_Textu
 
 
 
-void Player::setMaxProjectiles(int newMax) {
-	maxProjectiles = newMax;
-}
-int Player::getMaxProjectiles() const
-{
-	return maxProjectiles;
-}
+
+
 //PITA
 bool Player::outOfBounds(std::vector<Entity>& projectile, int& windowWidth, int& windowHeight, bool* detectOutOfBounds, Audio& audio2)
 {
@@ -110,8 +105,8 @@ bool Player::outOfBounds(std::vector<Entity>& projectile, int& windowWidth, int&
 		{
 			it = projectile.erase(it);
 			*detectOutOfBounds = true;
-			audio2.play();
-			//std::cout << "Projectiles remaining: " << projectile.size() << "\n";
+			audio2.playDeathSound();
+			std::cout << "Projectiles remaining: " << projectile.size() << "\n";
 
 		}
 		else {
@@ -129,8 +124,17 @@ bool Player::outOfBounds(std::vector<Entity>& projectile, int& windowWidth, int&
 void Player::setX(int x) { rect.x = x; }
 void Player::setY(int y) { rect.y = y; }
 
+void Player::updateMaxProj(Audio& audio3) {
+	if (score % 10 == 0 && score != 0) {
+		maxProjectiles++;
+		audio3.playLevelUpSound();
+		std::cout << "Max projectiles: " << maxProjectiles << std::endl;
+	}
+}
 
-void Player::incrementScore() {
+
+void Player::incrementScore(Audio& audio3) {
+	updateMaxProj(audio3);
 	score += 1;
 	//std::cout << "SCORE: " << score << std::endl;
 }

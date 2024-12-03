@@ -23,10 +23,11 @@ this a school project L
 
 --add graphics -- delegate this
 
--- add shotting delay (for multiple projectiles) [ASK PROF]
+-- add shotting delay -- DONE (ish)
 
--- redo wall hitbox [ASK PROF]
+-- redo wall hitbox [ASK PROF] // look at xy value when bugged and manually move it // specific angle 
 
 -- implement power ups (for more projectiles)
 
 -- limit aiming to 180 degrees downward 
+

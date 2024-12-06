@@ -60,6 +60,7 @@ void Audio::playDeathSound() {
     }
 }
 
+
 void Audio::playLevelUpSound() {
     if (levelUpSound) {
         Mix_PlayChannel(-1, levelUpSound, 0); // Play on any available channel

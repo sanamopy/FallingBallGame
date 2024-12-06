@@ -7,7 +7,7 @@ FontManager& FontManager::Instance() {
 }
 
 bool FontManager::LoadFont(const std::string& fontID, const std::string& path, int fontSize) {
-    TTF_Font* font = TTF_OpenFont(path.c_str(), fontSize);
+    TTF_Font* font = TTF_OpenFont("Fonts/" + path.c_str(), fontSize);
     if (!font) {
         std::cout << "Failed to load font: " << TTF_GetError() << std::endl;
         return false;

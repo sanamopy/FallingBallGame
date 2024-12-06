@@ -51,7 +51,7 @@ void RenderWindow::render(Entity& p_entity)
 SDL_Texture* RenderWindow::loadTexture(const char* p_filePath)
 {
     SDL_Texture* texture = NULL;
-    texture = IMG_LoadTexture(renderer, p_filePath);
+    texture = IMG_LoadTexture(renderer, "Assets/" + p_filePath);
     if (texture == NULL)
     {
         std::cout << "MERDE TEXTURE : " << IMG_GetError() << std::endl;

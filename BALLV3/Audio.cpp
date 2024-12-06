@@ -22,9 +22,9 @@ bool Audio::initialize() {
 }
 
 bool Audio::loadMp3(const std::string& hitFilePath, const std::string& deathFilePath, const std::string& levelUpFilePath) {
-    hitSound = Mix_LoadWAV(hitFilePath.c_str());
-    deathSound = Mix_LoadWAV(deathFilePath.c_str());
-    levelUpSound = Mix_LoadWAV(levelUpFilePath.c_str());
+    hitSound = Mix_LoadWAV("Audio/" + hitFilePath.c_str());
+    deathSound = Mix_LoadWAV("Audio/" + deathFilePath.c_str());
+    levelUpSound = Mix_LoadWAV("Audio/" + levelUpFilePath.c_str());
 
     if (!hitSound) {
         std::cerr << "Failed to load hit sound: " << Mix_GetError() << std::endl;
